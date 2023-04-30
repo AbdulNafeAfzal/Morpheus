@@ -1,0 +1,22 @@
+{
+  "name": "my-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "nafe": "nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord-button-pages": "^1.1.9",
+    "discord-buttons": "^4.0.0-deprecated",
+    "discord.js": "^14.9.0",
+    "dotenv": "^16.0.3",
+    "mongoose": "^7.0.5",
+    "nodemon": "^2.0.22",
+    "pagination.djs": "^4.0.9"
+  }
+}

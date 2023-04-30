@@ -7,16 +7,18 @@ const mongoose = require('mongoose');
 //importing models from database
 const user = require('../models/user_data');
 const card = require('../models/cards_data');
-const {customCard} = require('../functions/customCard');
+const { customCard } = require('../functions/customCard');
 
 //importing functions ie embeds
 const { dreamers_guide, button } = require('../functions/dreamers_guide')
-const {CHILLGARD, TUNDRAMADOS, FREJLORD, EREYAS, CLARA_OCULUS, GALADHOR, GOULRICHT_KEEP, BRACKHILL_FORT, BLACKMOURE_IGNES, GRIMPASS_KEEP, SHADOWFELL_MANOR, CATACOMBS_OF_GASHNAKH, AERENDEL, CASTLE_HYCROFT, CASTLE_OF_THE_AESIRS, STORMWIND_PASS, CARADHRAS_MARE, DRIFTMAW} = require('../functions/biomes');
-const {NIVEN_FIREBORN, SIR_GALAHAD, KING_LEONIDAS, URSA_MAJOR, CAPTAIN_GILLSBANE, AURELIUS_DIVINEHEART, BOFUR_IRONBEARD, JOTNAR_WINTERFURY, QUEEN_BRYNHILDR, CELEBORN_ELENSARION} = require("../functions/avatars")
-const allAvatars = {NIVEN_FIREBORN, SIR_GALAHAD, KING_LEONIDAS, URSA_MAJOR, CAPTAIN_GILLSBANE, AURELIUS_DIVINEHEART, BOFUR_IRONBEARD, JOTNAR_WINTERFURY, QUEEN_BRYNHILDR, CELEBORN_ELENSARION};
-const allBiomes = {CHILLGARD, TUNDRAMADOS, FREJLORD, EREYAS, CLARA_OCULUS, GALADHOR, GOULRICHT_KEEP, BRACKHILL_FORT, BLACKMOURE_IGNES, GRIMPASS_KEEP, SHADOWFELL_MANOR, CATACOMBS_OF_GASHNAKH, AERENDEL, CASTLE_HYCROFT, CASTLE_OF_THE_AESIRS, STORMWIND_PASS, CARADHRAS_MARE, DRIFTMAW};
-const {shop, starter_pack_button} = require('../functions/shop');
+const { CHILLGARD, TUNDRAMADOS, FREJLORD, EREYAS, CLARA_OCULUS, GALADHOR, GOULRICHT_KEEP, BRACKHILL_FORT, BLACKMOURE_IGNES, GRIMPASS_KEEP, SHADOWFELL_MANOR, CATACOMBS_OF_GASHNAKH, AERENDEL, CASTLE_HYCROFT, CASTLE_OF_THE_AESIRS, STORMWIND_PASS, CARADHRAS_MARE, DRIFTMAW } = require('../functions/biomes');
+const { NIVEN_FIREBORN, SIR_GALAHAD, KING_LEONIDAS, URSA_MAJOR, CAPTAIN_GILLSBANE, AURELIUS_DIVINEHEART, BOFUR_IRONBEARD, JOTNAR_WINTERFURY, QUEEN_BRYNHILDR, CELEBORN_ELENSARION } = require("../functions/avatars")
+const allAvatars = { NIVEN_FIREBORN, SIR_GALAHAD, KING_LEONIDAS, URSA_MAJOR, CAPTAIN_GILLSBANE, AURELIUS_DIVINEHEART, BOFUR_IRONBEARD, JOTNAR_WINTERFURY, QUEEN_BRYNHILDR, CELEBORN_ELENSARION };
+const allBiomes = { CHILLGARD, TUNDRAMADOS, FREJLORD, EREYAS, CLARA_OCULUS, GALADHOR, GOULRICHT_KEEP, BRACKHILL_FORT, BLACKMOURE_IGNES, GRIMPASS_KEEP, SHADOWFELL_MANOR, CATACOMBS_OF_GASHNAKH, AERENDEL, CASTLE_HYCROFT, CASTLE_OF_THE_AESIRS, STORMWIND_PASS, CARADHRAS_MARE, DRIFTMAW };
+const { shop, starter_pack_button } = require('../functions/shop');
 const { customProfile } = require('../functions/userProfile');
+// const { inventory } = require('../functions/inventory');
+const {inventory} = require('../functions/inventory');
 
 
 const client = new Client({
@@ -89,7 +91,7 @@ client.on('interactionCreate', async interaction => {
       userExist.save();
       const selectedBiome = await userExist.biome
       console.log(selectedBiome)
-      await interaction.reply({ embeds: [allBiomes[selectedBiome]]});
+      await interaction.reply({ embeds: [allBiomes[selectedBiome]] });
       await interaction.editReply("**YOU HAVE SUCCESSFULLY ACQUIRED THIS BIOME!**");
       break;
     case 'avatar-selector':
@@ -97,14 +99,28 @@ client.on('interactionCreate', async interaction => {
       userExist.avatar = avatar;
       userExist.save();
       const selectedAvatar = await userExist.avatar
-      await interaction.reply({ embeds: [allAvatars[selectedAvatar]]});
+      await interaction.reply({ embeds: [allAvatars[selectedAvatar]] });
       await interaction.editReply("**YOU HAVE SUCCESSFULLY ACQUIRED THIS AVATAR!**");
       break;
     case 'shop':
       await interaction.reply({ embeds: [shop], components: [starter_pack_button] });
       break;
     case 'profile-view':
-      await interaction.reply({embeds: [customProfile(userExist)]});
+      await interaction.reply({ embeds: [customProfile(userExist)] });
+      break;
+    case 'inventory':
+      const userCardIds = userExist.cards;
+      let userCards = [];
+      for (i = 0; i < userCardIds.length; i++) {
+        const foundCard = await card.findOne({ _id: userCardIds[i]._id });
+        userCards.push(foundCard);
+      }
+      // console.log(userCards);
+      const finalInventory = inventory(userCards);
+      console.log(finalInventory);
+      await interaction.reply({embeds : [finalInventory]});
+      // await interaction.reply("This is inventory");
+      // await interaction.reply(htmlToPng("john"));
       break;
     default:
       await interaction.reply("Please Check your command");
@@ -151,8 +167,8 @@ client.on('interactionCreate', async interaction => {
       ]).exec();
       const newCard = customCard(randomCard[0]);
       userExist.cards.push(randomCard[0]._id);
-      userExist.save(); 
-      await interaction.reply({embeds:[newCard]});
+      userExist.save();
+      await interaction.reply({ embeds: [newCard] });
       break;
     default:
       await interaction.reply("Please Check your command");

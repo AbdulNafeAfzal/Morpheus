@@ -31,6 +31,10 @@ const commands = [
     description: 'See Your Profile Stats'
   },
   {
+    name: 'inventory',
+    description: 'See what cards are in your hands'
+  },
+  {
     name: 'biome-selector',
     description: "Select a biome of your choice!",
     options: [

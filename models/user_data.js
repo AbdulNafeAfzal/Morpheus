@@ -19,9 +19,13 @@ const userSchema = mongoose.Schema({
     },
     coins: {
         type: Number,
-        required: false
+        required: false,
+        default: 0
     },
     cards: [{
+        _id: String,
+    }],
+    team: [{
         _id: String,
     }],
 })

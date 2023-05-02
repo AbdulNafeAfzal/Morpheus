@@ -35,6 +35,18 @@ const commands = [
     description: 'See what cards are in your hands'
   },
   {
+    name: 'team-add',
+    description: 'Add Cards to your Team'
+  },
+  {
+    name: 'team-remove',
+    description: 'Remove cards from your team'
+  },
+  {
+    name: 'pve',
+    description: "Let's Play the Game!!!!!"
+  },
+  {
     name: 'biome-selector',
     description: "Select a biome of your choice!",
     options: [

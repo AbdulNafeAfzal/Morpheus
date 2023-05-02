@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, IntentsBitField, ActivityType } = require('discord.js');
+const { Client, IntentsBitField, ActivityType, Events } = require('discord.js');
 const { Pagination } = require('pagination.djs');
 const { enroll, Register } = require('../functions/enroll');
 const mongoose = require('mongoose');
@@ -18,7 +18,9 @@ const allBiomes = { CHILLGARD, TUNDRAMADOS, FREJLORD, EREYAS, CLARA_OCULUS, GALA
 const { shop, starter_pack_button } = require('../functions/shop');
 const { customProfile } = require('../functions/userProfile');
 // const { inventory } = require('../functions/inventory');
-const {inventory} = require('../functions/inventory');
+const { inventory } = require('../functions/inventory');
+const { teamSelectionMenu } = require('../functions/teamAdd');
+const { teamRemoveMenu } = require('../functions/teamRemove')
 
 
 const client = new Client({
@@ -43,8 +45,8 @@ client.on('ready', (c) => {
 
 
 
-
-
+//To make user use select menu only once
+const usedSelectMenuUsers = new Set();
 
 
 //--------------------------------   COMMANDS HERE   ------------------------------------------//
@@ -66,6 +68,7 @@ client.on('interactionCreate', async interaction => {
     interaction.reply("Please Register first to use this command!");
     return;
   }
+  const teamSize = await userExist.team.length;
   switch (interaction.commandName) {
     case 'biome-details':
       const biomeArray = [CHILLGARD, TUNDRAMADOS, FREJLORD, EREYAS, CLARA_OCULUS, GALADHOR, GOULRICHT_KEEP, BRACKHILL_FORT, BLACKMOURE_IGNES, GRIMPASS_KEEP, SHADOWFELL_MANOR, CATACOMBS_OF_GASHNAKH, AERENDEL, CASTLE_HYCROFT, CASTLE_OF_THE_AESIRS, STORMWIND_PASS, CARADHRAS_MARE, DRIFTMAW]
@@ -90,7 +93,6 @@ client.on('interactionCreate', async interaction => {
       userExist.biome = biome;
       userExist.save();
       const selectedBiome = await userExist.biome
-      console.log(selectedBiome)
       await interaction.reply({ embeds: [allBiomes[selectedBiome]] });
       await interaction.editReply("**YOU HAVE SUCCESSFULLY ACQUIRED THIS BIOME!**");
       break;
@@ -115,12 +117,33 @@ client.on('interactionCreate', async interaction => {
         const foundCard = await card.findOne({ _id: userCardIds[i]._id });
         userCards.push(foundCard);
       }
-      // console.log(userCards);
       const finalInventory = inventory(userCards);
-      console.log(finalInventory);
-      await interaction.reply({embeds : [finalInventory]});
-      // await interaction.reply("This is inventory");
-      // await interaction.reply(htmlToPng("john"));
+      await interaction.reply({ embeds: [finalInventory] });
+      break;
+    case 'team-add':
+      if (teamSize == 3) {
+        await interaction.reply("Your team is full, use /team-remove to remove some cards and add another.");
+        return;
+      }
+      teamSelectionMenu(interaction);
+      break;
+    case 'team-remove':
+      if (teamSize == 0) {
+        await interaction.reply("Your team is already empty!!!");
+        return;
+      }
+      teamRemoveMenu(interaction);
+      break;
+    //--------------------Playing commands PVE ---------------//
+
+    case 'pve':
+      const randomNum = Math.round(Math.random()); // generates either 0 or 1
+      if(randomNum){
+        await interaction.reply("Youll get a Non-combat playstyle");
+      }
+      else{
+        await interaction.reply("Youll get COMBAT playstyle");
+      }
       break;
     default:
       await interaction.reply("Please Check your command");
@@ -141,6 +164,13 @@ client.on('interactionCreate', async interaction => {
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isButton()) return;
+  //To limit the button to the user who used the command
+  // if (!interaction.customId.endsWith(interaction.user.id)) {
+  //   return interaction.reply({
+  //     content: "This button is not for you",
+  //     ephemeral: true
+  //   })
+  // }
   const userExist = await user.findOne({ userId: interaction.user.id });
   if (interaction.customId == "register") {
     if (!userExist) {
@@ -159,8 +189,6 @@ client.on('interactionCreate', async interaction => {
       await interaction.reply("This button was clicked");
       break;
     case 'starter':
-      const allCards = await card.find({});
-      console.log(allCards);
       const randomCard = await card.aggregate([
         { $match: {} },
         { $sample: { size: 1 } },
@@ -177,6 +205,42 @@ client.on('interactionCreate', async interaction => {
 });
 
 
+
+
+
+
+
+
+
+
+
+
+//----------------SELECT MENU-------------------------//
+
+client.on('interactionCreate', async (interaction) => {
+  const userExist = await user.findOne({ userId: interaction.user.id });
+  if (!interaction.isStringSelectMenu) return;
+  if (usedSelectMenuUsers.has(interaction.user.id)) {
+    // User has already used the select menu, handle accordingly
+    await interaction.reply("You've already used this select menu.");
+    return;
+  }
+  usedSelectMenuUsers.add(user.id);
+  switch (interaction.customId) {
+    case 'select-team':
+      await userExist.team.push(interaction.values[0][0]);
+      userExist.save();
+      await interaction.reply(`${interaction.values} has been added to your team`);
+      break;
+    case 'remove-team':
+      await userExist.team.pull({ _id: interaction.values[0][0] });
+      userExist.save();
+      await interaction.reply(`${interaction.values} has been removed from your team`);
+      break;
+    default:
+      break;
+  }
+});
 
 
 

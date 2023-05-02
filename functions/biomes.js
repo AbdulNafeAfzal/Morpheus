@@ -384,12 +384,4 @@ const EREYAS = new EmbedBuilder()
       "https://images4.fanpop.com/image/photos/22100000/The-letter-the-alphabet-22187339-2560-2560.jpg",
   });
 
-  // const select = new ActionRowBuilder()
-  // .addComponents(
-  //  new ButtonBuilder()
-  // .setCustomId('select')
-  // .setLabel('Click here to select this biome')
-  // .setStyle(ButtonStyle.Success)
-  // );
-
 module.exports = {CHILLGARD, TUNDRAMADOS, FREJLORD, EREYAS, CLARA_OCULUS, GALADHOR, GOULRICHT_KEEP, BRACKHILL_FORT, BLACKMOURE_IGNES, GRIMPASS_KEEP, SHADOWFELL_MANOR, CATACOMBS_OF_GASHNAKH, AERENDEL, CASTLE_HYCROFT, CASTLE_OF_THE_AESIRS, STORMWIND_PASS, CARADHRAS_MARE, DRIFTMAW};

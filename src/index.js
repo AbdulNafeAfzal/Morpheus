@@ -10,7 +10,7 @@ const card = require('../models/cards_data');
 const { customCard } = require('../functions/customCard');
 
 //importing functions ie embeds
-const { dreamers_guide, button } = require('../functions/dreamers_guide')
+const { dreamers_guide, card_info } = require('../functions/dreamers_guide')
 const { CHILLGARD, TUNDRAMADOS, FREJLORD, EREYAS, CLARA_OCULUS, GALADHOR, GOULRICHT_KEEP, BRACKHILL_FORT, BLACKMOURE_IGNES, GRIMPASS_KEEP, SHADOWFELL_MANOR, CATACOMBS_OF_GASHNAKH, AERENDEL, CASTLE_HYCROFT, CASTLE_OF_THE_AESIRS, STORMWIND_PASS, CARADHRAS_MARE, DRIFTMAW } = require('../functions/biomes');
 const { NIVEN_FIREBORN, SIR_GALAHAD, KING_LEONIDAS, URSA_MAJOR, CAPTAIN_GILLSBANE, AURELIUS_DIVINEHEART, BOFUR_IRONBEARD, JOTNAR_WINTERFURY, QUEEN_BRYNHILDR, CELEBORN_ELENSARION } = require("../functions/avatars")
 const allAvatars = { NIVEN_FIREBORN, SIR_GALAHAD, KING_LEONIDAS, URSA_MAJOR, CAPTAIN_GILLSBANE, AURELIUS_DIVINEHEART, BOFUR_IRONBEARD, JOTNAR_WINTERFURY, QUEEN_BRYNHILDR, CELEBORN_ELENSARION };
@@ -155,7 +155,7 @@ client.on('interactionCreate', async interaction => {
     }
   }
   switch (interaction.customId) {
-    case 'button':
+    case 'card_info':
       await interaction.reply("This button was clicked");
       break;
     case 'starter':

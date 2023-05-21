@@ -47,14 +47,25 @@ client.on('ready', (c) => {
 
 //To make user use select menu only once
 const usedSelectMenuUsers = new Set();
-
+// client.on('interactionCreate', async interaction => {
+//   if(interaction.isCommand()){
+//     const userExist = await user.findOne({ userId: interaction.user.id });
+//     if (!userExist) {
+//       return await interaction.reply({
+//         content: "Please register before using my commands",
+//         components: [Register],
+//         ephemeral: true,
+//       });
+//     }
+//   }
+// })
 
 //--------------------------------   COMMANDS HERE   ------------------------------------------//
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
   const userExist = await user.findOne({ userId: interaction.user.id });
-  if (interaction.commandName == "enroll") {
+  if (interaction.commandName === "enroll") {
     if (!userExist) {
       await interaction.reply({ embeds: [enroll], components: [Register] });
       return;
@@ -64,10 +75,11 @@ client.on('interactionCreate', async interaction => {
       return;
     }
   }
-  if (!userExist) {
-    interaction.reply("Please Register first to use this command!");
-    return;
-  }
+  
+  // if (!userExist) {
+  //   interaction.reply("Please Register first to use this command!");
+  //   return;
+  // }
   const teamSize = await userExist.team.length;
   switch (interaction.commandName) {
     case 'biome-details':
@@ -219,7 +231,7 @@ client.on('interactionCreate', async interaction => {
 
 client.on('interactionCreate', async (interaction) => {
   const userExist = await user.findOne({ userId: interaction.user.id });
-  if (!interaction.isStringSelectMenu) return;
+  if (!interaction.isStringSelectMenu()) return;
   if (usedSelectMenuUsers.has(interaction.user.id)) {
     // User has already used the select menu, handle accordingly
     await interaction.reply("You've already used this select menu.");

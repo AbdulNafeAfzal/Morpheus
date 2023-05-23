@@ -71,95 +71,99 @@ client.on('interactionCreate', async interaction => {
       return;
     }
     else {
-      interaction.reply("You are already registered!");
+      await interaction.reply("You are already registered!");
       return;
     }
   }
   
-  // if (!userExist) {
-  //   interaction.reply("Please Register first to use this command!");
-  //   return;
-  // }
-  const teamSize = await userExist.team.length;
-  switch (interaction.commandName) {
-    case 'biome-details':
-      const biomeArray = [CHILLGARD, TUNDRAMADOS, FREJLORD, EREYAS, CLARA_OCULUS, GALADHOR, GOULRICHT_KEEP, BRACKHILL_FORT, BLACKMOURE_IGNES, GRIMPASS_KEEP, SHADOWFELL_MANOR, CATACOMBS_OF_GASHNAKH, AERENDEL, CASTLE_HYCROFT, CASTLE_OF_THE_AESIRS, STORMWIND_PASS, CARADHRAS_MARE, DRIFTMAW]
-      const biomes = new Pagination(interaction);
-      biomes.setEmbeds(biomeArray);
-      await biomes.render();
-      break;
-    case 'avatar-details':
-      const avatarArray = [NIVEN_FIREBORN, SIR_GALAHAD, KING_LEONIDAS, URSA_MAJOR, CAPTAIN_GILLSBANE, AURELIUS_DIVINEHEART, BOFUR_IRONBEARD, JOTNAR_WINTERFURY, QUEEN_BRYNHILDR, CELEBORN_ELENSARION]
-      const avatars = new Pagination(interaction);
-      avatars.setEmbeds(avatarArray);
-      await avatars.render();
-      break;
-    case 'dreamers-guide':
-      await interaction.reply({ embeds: [dreamers_guide], components: [button] })
-      break;
-    case 'card_details':
-      await interaction.reply({ embeds: [card_details] })
-      break;
-    case 'biome-selector':
-      const biome = interaction.options.get('select-biome').value
-      userExist.biome = biome;
-      userExist.save();
-      const selectedBiome = await userExist.biome
-      await interaction.reply({ embeds: [allBiomes[selectedBiome]] });
-      await interaction.editReply("**YOU HAVE SUCCESSFULLY ACQUIRED THIS BIOME!**");
-      break;
-    case 'avatar-selector':
-      const avatar = interaction.options.get('select-avatar').value
-      userExist.avatar = avatar;
-      userExist.save();
-      const selectedAvatar = await userExist.avatar
-      await interaction.reply({ embeds: [allAvatars[selectedAvatar]] });
-      await interaction.editReply("**YOU HAVE SUCCESSFULLY ACQUIRED THIS AVATAR!**");
-      break;
-    case 'shop':
-      await interaction.reply({ embeds: [shop], components: [starter_pack_button] });
-      break;
-    case 'profile-view':
-      await interaction.reply({ embeds: [customProfile(userExist)] });
-      break;
-    case 'inventory':
-      const userCardIds = userExist.cards;
-      let userCards = [];
-      for (i = 0; i < userCardIds.length; i++) {
-        const foundCard = await card.findOne({ _id: userCardIds[i]._id });
-        userCards.push(foundCard);
-      }
-      const finalInventory = inventory(userCards);
-      await interaction.reply({ embeds: [finalInventory] });
-      break;
-    case 'team-add':
-      if (teamSize == 3) {
-        await interaction.reply("Your team is full, use /team-remove to remove some cards and add another.");
+  if (!userExist) {
+    await interaction.reply("Please Register first to use this command!");
+    return;
+  }
+  else{
+    const teamSize = await userExist.team.length;
+    switch (interaction.commandName) {
+      case 'biome-details':
+        const biomeArray = [CHILLGARD, TUNDRAMADOS, FREJLORD, EREYAS, CLARA_OCULUS, GALADHOR, GOULRICHT_KEEP, BRACKHILL_FORT, BLACKMOURE_IGNES, GRIMPASS_KEEP, SHADOWFELL_MANOR, CATACOMBS_OF_GASHNAKH, AERENDEL, CASTLE_HYCROFT, CASTLE_OF_THE_AESIRS, STORMWIND_PASS, CARADHRAS_MARE, DRIFTMAW]
+        const biomes = new Pagination(interaction);
+        biomes.setEmbeds(biomeArray);
+        await biomes.render();
         return;
-      }
-      teamSelectionMenu(interaction);
-      break;
-    case 'team-remove':
-      if (teamSize == 0) {
-        await interaction.reply("Your team is already empty!!!");
+        break;
+      case 'avatar-details':
+        const avatarArray = [NIVEN_FIREBORN, SIR_GALAHAD, KING_LEONIDAS, URSA_MAJOR, CAPTAIN_GILLSBANE, AURELIUS_DIVINEHEART, BOFUR_IRONBEARD, JOTNAR_WINTERFURY, QUEEN_BRYNHILDR, CELEBORN_ELENSARION]
+        const avatars = new Pagination(interaction);
+        avatars.setEmbeds(avatarArray);
+        await avatars.render();
         return;
-      }
-      teamRemoveMenu(interaction);
-      break;
-    //--------------------Playing commands PVE ---------------//
-
-    case 'pve':
-      const randomNum = Math.round(Math.random()); // generates either 0 or 1
-      if(randomNum){
-        await interaction.reply("Youll get a Non-combat playstyle");
-      }
-      else{
-        await interaction.reply("Youll get COMBAT playstyle");
-      }
-      break;
-    default:
-      await interaction.reply("Please Check your command");
-      break;
+        break;
+      case 'dreamers-guide':
+        await interaction.reply({ embeds: [dreamers_guide], components: [button] })
+        break;
+      case 'card_details':
+        await interaction.reply({ embeds: [card_details] })
+        break;
+      case 'biome-selector':
+        const biome = interaction.options.get('select-biome').value
+        userExist.biome = biome;
+        userExist.save();
+        const selectedBiome = await userExist.biome
+        await interaction.reply({ embeds: [allBiomes[selectedBiome]] });
+        await interaction.editReply("**YOU HAVE SUCCESSFULLY ACQUIRED THIS BIOME!**");
+        break;
+      case 'avatar-selector':
+        const avatar = interaction.options.get('select-avatar').value
+        userExist.avatar = avatar;
+        userExist.save();
+        const selectedAvatar = await userExist.avatar
+        await interaction.reply({ embeds: [allAvatars[selectedAvatar]] });
+        await interaction.editReply("**YOU HAVE SUCCESSFULLY ACQUIRED THIS AVATAR!**");
+        break;
+      case 'shop':
+        await interaction.reply({ embeds: [shop], components: [starter_pack_button] });
+        break;
+      case 'profile-view':
+        await interaction.reply({ embeds: [customProfile(userExist)] });
+        break;
+      case 'inventory':
+        const userCardIds = userExist.cards;
+        let userCards = [];
+        for (i = 0; i < userCardIds.length; i++) {
+          const foundCard = await card.findOne({ _id: userCardIds[i]._id });
+          userCards.push(foundCard);
+        }
+        const finalInventory = inventory(userCards);
+        await interaction.reply({ embeds: [finalInventory] });
+        break;
+      case 'team-add':
+        if (teamSize == 3) {
+          await interaction.reply("Your team is full, use /team-remove to remove some cards and add another.");
+          return;
+        }
+        teamSelectionMenu(interaction);
+        break;
+      case 'team-remove':
+        if (teamSize == 0) {
+          await interaction.reply("Your team is already empty!!!");
+          return;
+        }
+        teamRemoveMenu(interaction);
+        break;
+      //--------------------Playing commands PVE ---------------//
+  
+      case 'pve':
+        const randomNum = Math.round(Math.random()); // generates either 0 or 1
+        if(randomNum){
+          await interaction.reply("Youll get a Non-combat playstyle");
+        }
+        else{
+          await interaction.reply("Youll get COMBAT playstyle");
+        }
+        break;
+      default:
+        await interaction.reply("Please Check your command");
+        break;
+    }
   }
 });
 
@@ -176,6 +180,11 @@ client.on('interactionCreate', async interaction => {
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isButton()) return;
+  console.log(interaction.customId);
+  if( interaction.customId === "paginate-next" || interaction.customId === "paginate-prev" || interaction.customId === "paginate-first" || interaction.customId === "paginate-last"){
+    console.log("I was clicked ")
+    return;
+  }
   //To limit the button to the user who used the command
   // if (!interaction.customId.endsWith(interaction.user.id)) {
   //   return interaction.reply({
@@ -192,7 +201,7 @@ client.on('interactionCreate', async interaction => {
       return;
     }
     else {
-      interaction.reply("You are already registered!");
+     await interaction.reply("You are already registered!");
       return;
     }
   }
